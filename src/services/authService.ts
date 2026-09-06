@@ -1,8 +1,9 @@
 import api from "../api/axios";
 import type {
+  AuthResponse,
   LoginForm,
   SignupForm,
-  AuthResponse,
+  User,
 } from "../types/auth";
 
 export const login = async (
@@ -17,12 +18,21 @@ export const login = async (
 };
 
 export const signup = async (
-  data: SignupForm
+  data: SignupForm,
 ): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>(
-    "/auth/signup",
+    "/auth/register",
     data
   );
 
   return response.data;
+};
+
+export const getCurrentUser = async (): Promise<User> => {
+  const response = await api.get<{ user: User }>("/auth/me");
+  return response.data.user;
+};
+
+export const logout = async (): Promise<void> => {
+  await api.post("/auth/logout");
 };

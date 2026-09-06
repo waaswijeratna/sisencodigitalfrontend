@@ -1,13 +1,18 @@
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import type { LoginForm, SignupForm } from "../types/auth";
 
 interface AuthFormProps {
+  error?: string;
   isSignup?: boolean;
-  onSubmit: (data: LoginForm | SignupForm) => void;
+  isLoading?: boolean;
+  onSubmit: (data: LoginForm | SignupForm) => void | Promise<void>;
 }
 
 export default function AuthForm({
+  error,
   isSignup = false,
+  isLoading = false,
   onSubmit,
 }: AuthFormProps) {
   const {
@@ -18,6 +23,11 @@ export default function AuthForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      {error && (
+        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </p>
+      )}
 
       {isSignup && (
         <div>
@@ -73,8 +83,8 @@ export default function AuthForm({
           {...register("password", {
             required: "Password is required",
             minLength: {
-              value: 6,
-              message: "Password must be at least 6 characters",
+              value: 8,
+              message: "Password must be at least 8 characters",
             },
           })}
           className="w-full rounded-lg border p-3"
@@ -90,10 +100,21 @@ export default function AuthForm({
 
       <button
         type="submit"
+        disabled={isLoading}
         className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white"
       >
-        {isSignup ? "Create Account" : "Login"}
+        {isLoading ? "Please wait..." : isSignup ? "Create Account" : "Login"}
       </button>
+
+      <p className="text-center text-sm text-[#657066]">
+        {isSignup ? "Already have an account?" : "New to Sisencodigital?"}{" "}
+        <Link
+          to={isSignup ? "/login" : "/signup"}
+          className="font-semibold text-[#1f5b4c] hover:text-[#163f35]"
+        >
+          {isSignup ? "Log in" : "Create an account"}
+        </Link>
+      </p>
     </form>
   );
 }
