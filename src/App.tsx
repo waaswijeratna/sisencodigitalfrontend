@@ -39,10 +39,7 @@ function App() {
 
 function AuthPage({ children }: { children: ReactNode }) {
   return (
-    <main className="min-h-screen bg-[#f4f1ea] px-6 py-16 text-[#20382e]">
-      <div className="mx-auto mb-16 max-w-5xl text-sm font-semibold tracking-[0.16em] text-[#20382e]">
-        SISENCO<span className="text-[#d36b42]">DIGITAL</span>
-      </div>
+    <main className="min-h-screen bg-[#f4f1ea] px-4 text-[#20382e]">
       {children}
     </main>
   );

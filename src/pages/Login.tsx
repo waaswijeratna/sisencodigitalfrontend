@@ -3,6 +3,7 @@ import { useAuthStore } from "../stores/authStore";
 import { getRolePath, type LoginForm } from "../types/auth";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import KineticGrid from "../components/GridBg";
 
 export default function Login() {
   const login = useAuthStore((state) => state.login);
@@ -24,22 +25,36 @@ export default function Login() {
   };
 
   return (
-    <div className="mx-auto max-w-md">
-      <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-[#d36b42]">
-        Welcome back
-      </p>
-      <h1 className="mb-2 text-4xl font-semibold tracking-tight text-[#20382e]">
-        Log in to your workspace
-      </h1>
-      <p className="mb-8 text-[#657066]">Pick up where you left off.</p>
+    <div className="flex min-h-screen w-full items-center gap-10 ">
 
-      {successMessage && (
-        <p className="mb-5 rounded-lg border border-[#b9d7c8] bg-[#edf8f1] px-4 py-3 text-sm text-[#236342]">
-          {successMessage}
+      <div className="hidden h-[95vh] w-1/2 md:block">
+        <KineticGrid className="rounded-lg">
+          <div className="flex h-full w-full items-center justify-center">
+            <span className="text-3xl font-semibold tracking-tight text-white">
+              SISENCO<span className="text-cyan-400">REPORTS</span>
+            </span>
+          </div>
+        </KineticGrid>
+      </div>
+
+      {/* Right side — auth form */}
+      <div className="mx-auto w-full max-w-md md:mx-0 md:w-1/2">
+        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-[#d36b42]">
+          Welcome back
         </p>
-      )}
+        <h1 className="mb-2 text-4xl font-semibold tracking-tight text-[#20382e]">
+          Log in to your workspace
+        </h1>
+        <p className="mb-8 text-[#657066]">Pick up where you left off.</p>
 
-      <AuthForm error={error} onSubmit={handleLogin} isLoading={isLoading} />
+        {successMessage && (
+          <p className="mb-5 rounded-lg border border-[#b9d7c8] bg-[#edf8f1] px-4 py-3 text-sm text-[#236342]">
+            {successMessage}
+          </p>
+        )}
+
+        <AuthForm error={error} onSubmit={handleLogin} isLoading={isLoading} />
+      </div>
     </div>
   );
 }
