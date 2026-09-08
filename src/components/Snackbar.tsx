@@ -6,15 +6,22 @@ interface SnackbarProps {
   message: string | null;
   tone: SnackbarTone;
   onClose: () => void;
+  confirm?: {
+    onConfirm: () => void;
+    confirmLabel?: string;
+    cancelLabel?: string;
+  };
 }
 
-export default function Snackbar({ message, tone, onClose }: SnackbarProps) {
+export default function Snackbar({ message, tone, onClose, confirm }: SnackbarProps) {
   useEffect(() => {
     if (!message) return undefined;
 
+    if (confirm) return undefined;
+
     const timeoutId = window.setTimeout(onClose, 4500);
     return () => window.clearTimeout(timeoutId);
-  }, [message, onClose]);
+  }, [message, onClose, confirm]);
 
   if (!message) return null;
 
@@ -32,10 +39,20 @@ export default function Snackbar({ message, tone, onClose }: SnackbarProps) {
         <span className={`mt-0.5 text-base ${isSuccess ? "text-emerald-300" : "text-rose-300"}`} aria-hidden="true">
           {isSuccess ? "✓" : "!"}
         </span>
-        <p className="flex-1 leading-5">{message}</p>
-        <button type="button" className="text-lg leading-none opacity-70 hover:opacity-100" onClick={onClose} aria-label="Close notification">
-          ×
-        </button>
+        <div className="flex-1">
+          <p className="leading-5">{message}</p>
+          {confirm && (
+            <div className="mt-3 flex gap-2">
+              <button type="button" className="rounded-md bg-rose-400 px-3 py-1.5 text-xs font-bold text-rose-950 hover:bg-rose-300" onClick={confirm.onConfirm}>
+                {confirm.confirmLabel ?? "Yes"}
+              </button>
+              <button type="button" className="rounded-md border border-current/30 px-3 py-1.5 text-xs font-semibold opacity-80 hover:opacity-100" onClick={onClose}>
+                {confirm.cancelLabel ?? "No"}
+              </button>
+            </div>
+          )}
+        </div>
+        {!confirm && <button type="button" className="text-lg leading-none opacity-70 hover:opacity-100" onClick={onClose} aria-label="Close notification">×</button>}
       </div>
     </div>
   );
