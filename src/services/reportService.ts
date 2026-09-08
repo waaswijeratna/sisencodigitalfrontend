@@ -7,6 +7,7 @@ import type {
   ReportSummary,
   TeamMember
 } from "../types/report";
+import type { TeamMemberOverview } from "../types/teamMemberOverview";
 
 export const getCurrentReportId = async () => {
   const response = await api.get<{ reportId: number | null }>("/reports/me");
@@ -74,4 +75,9 @@ export const reviewReport = async (
     ...(comment?.trim() ? { comment: comment.trim() } : {})
   });
   return response.data.report;
+};
+
+export const getTeamMemberOverview = async () => {
+  const response = await api.get<{ overview: TeamMemberOverview }>("/team-member/overview");
+  return response.data.overview;
 };
