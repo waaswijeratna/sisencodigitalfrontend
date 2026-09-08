@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import Snackbar, { type SnackbarTone } from "../../components/Snackbar";
+import VersionView from "./VersionView";
 import {
   createReport,
   deleteDraftReport,
@@ -35,6 +36,8 @@ interface ReportFormValues {
 interface ReportProps {
   reportId: number | null;
   isReportIdLoading: boolean;
+  refreshKey: number;
+  onRefresh: () => Promise<void>;
   onReportCreated: (reportId: number) => void;
 }
 
@@ -123,7 +126,7 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 const inputClass = "w-full rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-cyan-400 disabled:cursor-not-allowed disabled:opacity-55";
 const cardClass = "rounded-2xl border border-slate-800 bg-slate-950/45 p-5";
 
-export default function Report({ reportId, isReportIdLoading, onReportCreated }: ReportProps) {
+export default function Report({ reportId, isReportIdLoading, refreshKey, onRefresh, onReportCreated }: ReportProps) {
   const [report, setReport] = useState<ReportDetails | null>(null);
   const [projects, setProjects] = useState<{ id: number; name: string; isActive: boolean }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -176,7 +179,7 @@ export default function Report({ reportId, isReportIdLoading, onReportCreated }:
     return () => {
       cancelled = true;
     };
-  }, [reportId, reset]);
+  }, [reportId, refreshKey, reset]);
 
   const status = report?.status ?? null;
   const canEdit = status === null || status === "DRAFT" || status === "NEEDS_CORRECTION";
@@ -279,7 +282,18 @@ export default function Report({ reportId, isReportIdLoading, onReportCreated }:
             Capture completed work, plan the next week, and send it to your reviewer when ready.
           </p>
         </div>
-        {status && <span className="w-fit rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-cyan-300">{status.replace("_", " ")}</span>}
+        <div className="flex items-center gap-3">
+          {status && <span className="w-fit rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-cyan-300">{status.replace("_", " ")}</span>}
+          <button
+            type="button"
+            onClick={() => void onRefresh()}
+            disabled={isReportIdLoading || isLoading || isSaving || isDeleting}
+            className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-cyan-400 hover:text-cyan-300 disabled:cursor-not-allowed disabled:opacity-40"
+            title="Refresh report"
+          >
+            Refresh
+          </button>
+        </div>
       </header>
 
       {status === "NEEDS_CORRECTION" && (
@@ -374,6 +388,13 @@ export default function Report({ reportId, isReportIdLoading, onReportCreated }:
           </div>
         </footer>
       </form>
+      {report && (
+        <VersionView
+          latestVersion={report.latestVersion}
+          previousVersions={report.previousVersions}
+          adminMessages={report.adminMessages}
+        />
+      )}
     </div>
   );
 }

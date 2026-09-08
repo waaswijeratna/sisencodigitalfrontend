@@ -34,11 +34,14 @@ export interface ReportHours {
   meetings: number;
   documentation: number;
   other: number;
+  totalHours?: number;
 }
 
 export interface ReportVersion {
   id: number;
   versionNumber: number;
+  submittedAt: string | null;
+  createdAt: string;
   tasks: ReportTask[];
   nextTasks: NextWeekTask[];
   blockers: Blocker[];
@@ -59,6 +62,17 @@ export interface AdminMessage {
   };
 }
 
+export interface PreviousReportVersion {
+  id: number;
+  versionNumber: number;
+  submittedAt: string | null;
+  createdAt: string;
+  tasksCompletedCount: number;
+  totalWorkedHours: number;
+  blockersCount: number;
+  achievementsCount: number;
+}
+
 export interface ReportDetails {
   id: number;
   weekStart: string;
@@ -70,6 +84,7 @@ export interface ReportDetails {
     description?: string | null;
   };
   latestVersion: ReportVersion;
+  previousVersions: PreviousReportVersion[];
   adminMessages: AdminMessage[];
 }
 
