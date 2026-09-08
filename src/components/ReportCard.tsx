@@ -36,6 +36,7 @@ export default function ReportCard({ report, onClick }: ReportCardProps) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Weekly report</p>
+          <p className="mt-1 text-sm font-medium text-cyan-700">{report.user.name}</p>
           <h3 className="mt-1 text-lg font-semibold text-slate-800">{report.project.name}</h3>
           <p className="mt-1 text-sm text-slate-500">
             {formatDate(report.weekStart)} - {formatDate(report.weekEnd)}

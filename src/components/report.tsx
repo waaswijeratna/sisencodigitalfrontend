@@ -7,6 +7,7 @@ import {
   deleteDraftReport,
   getActiveProjects,
   getReportById,
+  reviewReport,
   submitReport,
   updateDraftReport
 } from "../services/reportService";
@@ -39,6 +40,8 @@ interface ReportProps {
   refreshKey: number;
   onRefresh: () => Promise<void>;
   onReportCreated: (reportId: number) => void;
+  readOnly?: boolean;
+  adminReviewMode?: boolean;
 }
 
 const priorities: TaskPriority[] = ["LOW", "MEDIUM", "HIGH"];
@@ -126,12 +129,14 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
 const inputClass = "w-full rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-cyan-400 disabled:cursor-not-allowed disabled:opacity-55";
 const cardClass = "rounded-2xl border border-slate-800 bg-slate-950/45 p-5";
 
-export default function Report({ reportId, isReportIdLoading, refreshKey, onRefresh, onReportCreated }: ReportProps) {
+export default function Report({ reportId, isReportIdLoading, refreshKey, onRefresh, onReportCreated, readOnly = false, adminReviewMode = false }: ReportProps) {
   const [report, setReport] = useState<ReportDetails | null>(null);
   const [projects, setProjects] = useState<{ id: number; name: string; isActive: boolean }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isReviewing, setIsReviewing] = useState(false);
+  const [reviewComment, setReviewComment] = useState("");
   const [snackbar, setSnackbar] = useState<{ message: string; tone: SnackbarTone } | null>(null);
 
   const {
@@ -182,10 +187,10 @@ export default function Report({ reportId, isReportIdLoading, refreshKey, onRefr
   }, [reportId, refreshKey, reset]);
 
   const status = report?.status ?? null;
-  const canEdit = status === null || status === "DRAFT" || status === "NEEDS_CORRECTION";
-  const canSave = status === null || status === "DRAFT";
-  const canSubmit = status === "DRAFT" || status === "NEEDS_CORRECTION";
-  const canDelete = status === "DRAFT";
+  const canEdit = !readOnly && (status === null || status === "DRAFT" || status === "NEEDS_CORRECTION");
+  const canSave = !readOnly && (status === null || status === "DRAFT");
+  const canSubmit = !readOnly && (status === "DRAFT" || status === "NEEDS_CORRECTION");
+  const canDelete = !readOnly && status === "DRAFT";
   const hasFormData = useMemo(() => {
     const hasHours = Object.values(watched.hours ?? {}).some((value) => Number(value) > 0);
     return Boolean(
@@ -199,6 +204,7 @@ export default function Report({ reportId, isReportIdLoading, refreshKey, onRefr
   }, [watched]);
   const saveEnabled = canSave && (reportId !== null || hasFormData);
   const submitEnabled = canSubmit && reportId !== null;
+  const canReview = adminReviewMode && status === "SUBMITTED" && reportId !== null;
   const latestCorrection = report?.adminMessages.find(
     (message) => message.action === "REQUESTED_CHANGES"
   );
@@ -267,6 +273,34 @@ export default function Report({ reportId, isReportIdLoading, refreshKey, onRefr
     }
   };
 
+  const review = async (action: "APPROVED" | "REQUESTED_CHANGES") => {
+    if (!reportId || !canReview) return;
+
+    if (action === "REQUESTED_CHANGES" && !reviewComment.trim()) {
+      setSnackbar({ message: "Add a message before requesting changes.", tone: "error" });
+      return;
+    }
+
+    setIsReviewing(true);
+    setSnackbar(null);
+
+    try {
+      await reviewReport(reportId, action, reviewComment);
+      const reviewedReport = await getReportById(reportId);
+      setReport(reviewedReport);
+      reset(toFormValues(reviewedReport));
+      setReviewComment("");
+      setSnackbar({
+        message: action === "APPROVED" ? "Report approved." : "Changes requested.",
+        tone: "success"
+      });
+    } catch (error) {
+      setSnackbar({ message: getErrorMessage(error), tone: "error" });
+    } finally {
+      setIsReviewing(false);
+    }
+  };
+
   if (isReportIdLoading || isLoading) {
     return <div className="flex h-full min-h-[28rem] items-center justify-center rounded-2xl bg-slate-950 text-slate-400">Loading this week&apos;s report...</div>;
   }
@@ -287,7 +321,7 @@ export default function Report({ reportId, isReportIdLoading, refreshKey, onRefr
           <button
             type="button"
             onClick={() => void onRefresh()}
-            disabled={isReportIdLoading || isLoading || isSaving || isDeleting}
+            disabled={isReportIdLoading || isLoading || isSaving || isDeleting || isReviewing}
             className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-cyan-400 hover:text-cyan-300 disabled:cursor-not-allowed disabled:opacity-40"
             title="Refresh report"
           >
@@ -379,12 +413,36 @@ export default function Report({ reportId, isReportIdLoading, refreshKey, onRefr
           <div className="grid gap-3 grid-cols-2 md:grid-cols-5">{(["development", "testing", "meetings", "documentation", "other"] as const).map((field) => <div key={field}><FieldLabel>{field}</FieldLabel><input className={inputClass} type="number" min="0" step="0.25" disabled={!canEdit} {...register(`hours.${field}`, { valueAsNumber: true })} /></div>)}</div>
         </section>
 
+        {canReview && (
+          <section className="rounded-2xl border border-cyan-400/25 bg-cyan-400/5 p-5">
+            <div>
+              <h2 className="text-base font-semibold text-slate-100">Review report</h2>
+              <p className="mt-1 text-xs text-slate-400">Approve this report or request changes with a message.</p>
+            </div>
+            <textarea
+              value={reviewComment}
+              onChange={(event) => setReviewComment(event.target.value)}
+              placeholder="Add a review message"
+              rows={3}
+              className="mt-4 w-full resize-y rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2.5 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-cyan-400"
+            />
+            <div className="mt-3 flex flex-wrap justify-end gap-3">
+              <button type="button" disabled={isReviewing} onClick={() => void review("REQUESTED_CHANGES")} className="rounded-lg border border-amber-400/40 px-4 py-2.5 text-sm font-semibold text-amber-200 hover:bg-amber-400/10 disabled:cursor-not-allowed disabled:opacity-40">
+                {isReviewing ? "Updating..." : "Request changes"}
+              </button>
+              <button type="button" disabled={isReviewing} onClick={() => void review("APPROVED")} className="rounded-lg bg-emerald-400 px-4 py-2.5 text-sm font-bold text-emerald-950 hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-40">
+                {isReviewing ? "Updating..." : "Approve report"}
+              </button>
+            </div>
+          </section>
+        )}
+
         <footer className="flex flex-col-reverse gap-3 border-t border-slate-800 pt-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-xs text-slate-500">{status === "SUBMITTED" || status === "APPROVED" ? "This report is view only." : status === "NEEDS_CORRECTION" ? "Submit your corrections when ready." : isDirty ? "Unsaved changes" : "All changes saved"}</div>
+          <div className="text-xs text-slate-500">{adminReviewMode ? "Admin review mode." : status === "SUBMITTED" || status === "APPROVED" ? "This report is view only." : status === "NEEDS_CORRECTION" ? "Submit your corrections when ready." : isDirty ? "Unsaved changes" : "All changes saved"}</div>
           <div className="flex flex-wrap justify-end gap-3">
-            {canDelete && <button type="button" disabled={isDeleting || isSaving} onClick={() => void remove()} className="rounded-lg border border-rose-400/40 px-4 py-2.5 text-sm font-semibold text-rose-300 hover:bg-rose-400/10 disabled:cursor-not-allowed disabled:opacity-40">{isDeleting ? "Deleting..." : "Delete draft"}</button>}
-            <button type="submit" disabled={isSaving || !saveEnabled} className="rounded-lg border border-cyan-400/40 bg-cyan-400/10 px-4 py-2.5 text-sm font-semibold text-cyan-200 hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-40">{isSaving ? "Saving..." : "Save as draft"}</button>
-            <button type="button" disabled={isSaving || !submitEnabled} onClick={() => void handleSubmit(submit)()} className="rounded-lg bg-cyan-400 px-4 py-2.5 text-sm font-bold text-slate-950 hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-40">{isSaving ? "Submitting..." : "Submit report"}</button>
+            {!adminReviewMode && canDelete && <button type="button" disabled={isDeleting || isSaving} onClick={() => void remove()} className="rounded-lg border border-rose-400/40 px-4 py-2.5 text-sm font-semibold text-rose-300 hover:bg-rose-400/10 disabled:cursor-not-allowed disabled:opacity-40">{isDeleting ? "Deleting..." : "Delete draft"}</button>}
+            {!adminReviewMode && <button type="submit" disabled={isSaving || !saveEnabled} className="rounded-lg border border-cyan-400/40 bg-cyan-400/10 px-4 py-2.5 text-sm font-semibold text-cyan-200 hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-40">{isSaving ? "Saving..." : "Save as draft"}</button>}
+            {!adminReviewMode && <button type="button" disabled={isSaving || !submitEnabled} onClick={() => void handleSubmit(submit)()} className="rounded-lg bg-cyan-400 px-4 py-2.5 text-sm font-bold text-slate-950 hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-40">{isSaving ? "Submitting..." : "Submit report"}</button>}
           </div>
         </footer>
       </form>

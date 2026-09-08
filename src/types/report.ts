@@ -93,6 +93,11 @@ export interface ReportSummary {
   weekStart: string;
   weekEnd: string;
   status: ReportStatus;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
   project: {
     id: number;
     name: string;
@@ -108,6 +113,8 @@ export interface ReportListFilters {
   fromDate?: string;
   toDate?: string;
   status?: ReportStatus;
+  teamMemberId?: number;
+  projectId?: number;
 }
 
 export interface Project {
@@ -126,3 +133,10 @@ export interface ReportPayload {
   achievements: Achievement[];
   hours: ReportHours;
 }
+
+export interface TeamMember {
+  id: number;
+  name: string;
+  email: string;
+}
+

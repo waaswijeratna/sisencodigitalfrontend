@@ -1,4 +1,5 @@
+import AllReports from "../../components/AllReports";
 
 export default function AdminReports() {
-  return <div>admin reports</div>;
+  return <AllReports />;
 }

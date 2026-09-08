@@ -19,15 +19,15 @@ export default function Profile() {
     };
 
     return (
-        <div className="text-sm">
+        <div className="text-xs">
             <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-300 text-base text-white uppercase shadow">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-300 text-base text-white uppercase text-xs">
                     {getInitials(user?.name)}
                 </div>
 
-                <div>
-                    <h1 className="font-bold">{user?.name}</h1>
-                    <p className="text-gray-500">{user?.email}</p>
+                <div className="w-full overflow-hidden">
+                    <h1 className="font-bold truncate">{user?.name}</h1>
+                    <p className="text-gray-500 truncate">{user?.email}</p>
                 </div>
             </div>
 

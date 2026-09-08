@@ -4,7 +4,8 @@ import type {
   ReportDetails,
   ReportListFilters,
   ReportPayload,
-  ReportSummary
+  ReportSummary,
+  TeamMember
 } from "../types/report";
 
 export const getCurrentReportId = async () => {
@@ -49,4 +50,28 @@ export const getReports = async (filters: ReportListFilters = {}) => {
   });
 
   return response.data.reports;
+};
+
+export const getProjects = async (includeInactive = false) => {
+  const response = await api.get<{ projects: Project[] }>("/projects", {
+    params: includeInactive ? { includeInactive: true } : undefined
+  });
+  return response.data.projects;
+};
+
+export const getTeamMembers = async () => {
+  const response = await api.get<{ users: TeamMember[] }>("/auth/team-members");
+  return response.data.users;
+};
+
+export const reviewReport = async (
+  reportId: number,
+  action: "APPROVED" | "REQUESTED_CHANGES",
+  comment?: string
+) => {
+  const response = await api.patch<{ report: ReportDetails }>(`/reports/${reportId}/review`, {
+    action,
+    ...(comment?.trim() ? { comment: comment.trim() } : {})
+  });
+  return response.data.report;
 };

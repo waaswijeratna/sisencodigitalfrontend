@@ -9,8 +9,8 @@ import { LayoutDashboardIcon, FileTextIcon, Users, LayoutList } from "@animateic
 import type { 
   LayoutDashboardIconHandle, 
   FileTextIconHandle, 
-  UsersHandle, 
-  LayoutListHandle 
+  UsersIconHandle,
+  LayoutListIconHandle
 } from "@animateicons/react/lucide";
 
 type NavigationTab = "overview" | "reports" | "team" | "projects";
@@ -20,8 +20,8 @@ export default function AdminHome() {
 
   const overviewIconRef = useRef<LayoutDashboardIconHandle>(null);
   const reportsIconRef = useRef<FileTextIconHandle>(null);
-  const teamIconRef = useRef<UsersHandle>(null);
-  const projectsIconRef = useRef<LayoutListHandle>(null);
+  const teamIconRef = useRef<UsersIconHandle>(null);
+  const projectsIconRef = useRef<LayoutListIconHandle>(null);
 
   const renderContent = () => {
     switch (activeTab) {

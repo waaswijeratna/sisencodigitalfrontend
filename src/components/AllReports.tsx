@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import ReportCard from "./ReportCard";
 import Report from "./report";
-import { getReports } from "../services/reportService";
-import type { ReportListFilters, ReportStatus, ReportSummary } from "../types/report";
+import { getProjects, getReports, getTeamMembers } from "../services/reportService";
+import { useAuthStore } from "../stores/authStore";
+import type { Project, ReportListFilters, ReportStatus, ReportSummary, TeamMember } from "../types/report";
 
 const statuses: Array<{ value: ReportStatus; label: string }> = [
   { value: "DRAFT", label: "Draft" },
@@ -20,7 +21,11 @@ const getErrorMessage = (error: unknown) => {
 };
 
 export default function AllReports() {
+  const role = useAuthStore((state) => state.user?.role);
+  const isAdmin = role === "ADMIN";
   const [reports, setReports] = useState<ReportSummary[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [filters, setFilters] = useState<ReportListFilters>({});
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -47,6 +52,21 @@ export default function AllReports() {
     return () => window.clearTimeout(timeoutId);
   }, [filters, loadReports]);
 
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const timeoutId = window.setTimeout(() => {
+      void Promise.all([getTeamMembers(), getProjects(true)])
+        .then(([loadedTeamMembers, loadedProjects]) => {
+          setTeamMembers(loadedTeamMembers);
+          setProjects(loadedProjects);
+        })
+        .catch((error: unknown) => setErrorMessage(getErrorMessage(error)));
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isAdmin]);
+
   const updateFilter = (key: keyof ReportListFilters, value: string) => {
     setFilters((current) => ({
       ...current,
@@ -58,6 +78,11 @@ export default function AllReports() {
 
   const refreshModalReport = async () => {
     setModalRefreshKey((key) => key + 1);
+  };
+
+  const closeReportModal = async () => {
+    setSelectedReportId(null);
+    await loadReports(filters);
   };
 
   return (
@@ -74,7 +99,7 @@ export default function AllReports() {
           </button>
         </div>
 
-        <div className="mt-5 grid gap-3 md:grid-cols-4">
+        <div className={`mt-5 grid gap-3 ${isAdmin ? "md:grid-cols-3 lg:grid-cols-6" : "md:grid-cols-4"}`}>
           <div>
             <label className="mb-1 block text-xs font-semibold text-slate-500" htmlFor="history-date">By date</label>
             <input id="history-date" type="date" value={filters.date ?? ""} onChange={(event) => updateFilter("date", event.target.value)} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-cyan-500" />
@@ -94,8 +119,26 @@ export default function AllReports() {
               {statuses.map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}
             </select>
           </div>
+          {isAdmin && (
+            <>
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-slate-500" htmlFor="history-team-member">Team member</label>
+                <select id="history-team-member" value={filters.teamMemberId ?? ""} onChange={(event) => updateFilter("teamMemberId", event.target.value)} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-cyan-500">
+                  <option value="">All team members</option>
+                  {teamMembers.map((member) => <option key={member.id} value={member.id}>{member.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-slate-500" htmlFor="history-project">Project</label>
+                <select id="history-project" value={filters.projectId ?? ""} onChange={(event) => updateFilter("projectId", event.target.value)} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-cyan-500">
+                  <option value="">All projects</option>
+                  {projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}
+                </select>
+              </div>
+            </>
+          )}
         </div>
-        {(filters.date || filters.fromDate || filters.toDate || filters.status) && <button type="button" onClick={clearFilters} className="mt-3 text-xs font-semibold text-cyan-700 hover:text-cyan-900">Clear filters</button>}
+        {(filters.date || filters.fromDate || filters.toDate || filters.status || filters.teamMemberId || filters.projectId) && <button type="button" onClick={clearFilters} className="mt-3 text-xs font-semibold text-cyan-700 hover:text-cyan-900">Clear filters</button>}
       </header>
 
       <div className="min-h-0 flex-1 overflow-y-auto pt-5">
@@ -109,7 +152,7 @@ export default function AllReports() {
           <div className="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-2xl bg-slate-950 p-3 shadow-2xl sm:p-5">
             <button
               type="button"
-              onClick={() => setSelectedReportId(null)}
+              onClick={() => void closeReportModal()}
               className="sticky right-0 top-0 z-10 float-right rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-sm font-semibold text-slate-300 hover:border-cyan-400 hover:text-cyan-300"
               aria-label="Close report"
             >
@@ -120,6 +163,8 @@ export default function AllReports() {
               isReportIdLoading={false}
               refreshKey={modalRefreshKey}
               onRefresh={refreshModalReport}
+              readOnly={isAdmin}
+              adminReviewMode={isAdmin}
               onReportCreated={(reportId) => {
                 if (reportId === 0) setSelectedReportId(null);
                 else setSelectedReportId(reportId);
