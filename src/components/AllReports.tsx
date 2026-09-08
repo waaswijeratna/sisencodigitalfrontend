@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import ReportCard from "./ReportCard";
 import Report from "./report";
-import { getReports } from "../../services/reportService";
-import type { ReportListFilters, ReportStatus, ReportSummary } from "../../types/report";
+import { getReports } from "../services/reportService";
+import type { ReportListFilters, ReportStatus, ReportSummary } from "../types/report";
 
 const statuses: Array<{ value: ReportStatus; label: string }> = [
   { value: "DRAFT", label: "Draft" },

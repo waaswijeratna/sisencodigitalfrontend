@@ -1,4 +1,4 @@
-import type { ReportSummary } from "../../types/report";
+import type { ReportSummary } from "../types/report";
 
 interface ReportCardProps {
   report: ReportSummary;

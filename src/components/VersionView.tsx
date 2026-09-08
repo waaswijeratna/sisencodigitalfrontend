@@ -2,7 +2,7 @@ import type {
   AdminMessage,
   PreviousReportVersion,
   ReportVersion
-} from "../../types/report";
+} from "../types/report";
 
 interface VersionViewProps {
   latestVersion: ReportVersion;

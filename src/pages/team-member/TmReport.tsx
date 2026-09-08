@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Report from "./report";
+import Report from "../../components/report";
 import { useAuthStore } from "../../stores/authStore";
 
 export default function TmReport() {

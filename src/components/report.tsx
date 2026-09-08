@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
-import Snackbar, { type SnackbarTone } from "../../components/Snackbar";
+import Snackbar, { type SnackbarTone } from "./Snackbar";
 import VersionView from "./VersionView";
 import {
   createReport,
@@ -9,7 +9,7 @@ import {
   getReportById,
   submitReport,
   updateDraftReport
-} from "../../services/reportService";
+} from "../services/reportService";
 import type {
   Achievement,
   Blocker,
@@ -20,7 +20,7 @@ import type {
   ReportTask,
   TaskPriority,
   TaskStatus
-} from "../../types/report";
+} from "../types/report";
 
 interface ReportFormValues {
   projectId: number;
