@@ -1,26 +1,106 @@
+import { useState, useRef } from "react";
+import Profile from "../../components/profile";
+import TmOverview from "./TmOverview";
+import TmHistory from "./TmHistory";
+import Report from "./report";
 import { useAuthStore } from "../../stores/authStore";
-import { useNavigate } from "react-router-dom";
+import { LayoutDashboardIcon, HistoryIcon, FileTextIcon} from "@animateicons/react/lucide";
+
+import type { LayoutDashboardIconHandle, HistoryIconHandle, FileTextIconHandle } from "@animateicons/react/lucide";
+
+type NavigationTab = "overview" | "history" | "reports";
 
 export default function TeamMemberHome() {
-  const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
-  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<NavigationTab>("overview");
+  const currentReportId = useAuthStore((state) => state.currentReportId);
+  const isCurrentReportLoading = useAuthStore((state) => state.isCurrentReportLoading);
+  const fetchCurrentReportId = useAuthStore((state) => state.fetchCurrentReportId);
+  const setCurrentReportId = useAuthStore((state) => state.setCurrentReportId);
 
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login", { replace: true });
+  const overviewIconRef = useRef<LayoutDashboardIconHandle>(null);
+  const historyIconRef = useRef<HistoryIconHandle>(null);
+  const reportsIconRef = useRef<FileTextIconHandle>(null);
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "overview":
+        return <TmOverview />;
+      case "history":
+        return <TmHistory />;
+      case "reports":
+        return <Report reportId={currentReportId} isReportIdLoading={isCurrentReportLoading} onReportCreated={setCurrentReportId} />;
+      default:
+        return <TmOverview />;
+    }
   };
 
   return (
-    <main className="min-h-screen bg-[#f4f1ea] px-6 py-8 text-[#20382e]">
-      <div className="mx-auto max-w-5xl">
-        <button onClick={() => void handleLogout()} className="float-right rounded-full border border-[#c8d0c7] px-4 py-2 text-sm font-semibold hover:bg-white">
-          Log out
-        </button>
-        <p className="pt-12 text-sm font-semibold uppercase tracking-[0.2em] text-[#d36b42]">Team workspace</p>
-        <h1 className="mt-3 text-5xl font-semibold tracking-tight">Good to see you, {user?.name}.</h1>
-        <p className="mt-4 text-lg text-[#657066]">Your team space is ready.</p>
-      </div>
+    <main className="flex min-h-screen text-sm bg-mist-950 text-cyan-50">
+      <aside className="flex h-screen w-[15vw] flex-col justify-between p-4">
+        <div>
+          <div className="text-xl font-bold tracking-wider text-cyan-400">
+            LOGO
+          </div>
+        </div>
+
+        <nav className="flex flex-col gap-2">
+          {/* Overview Button */}
+          <button
+            onClick={() => setActiveTab("overview")}
+            onMouseEnter={() => overviewIconRef.current?.startAnimation()}
+            onMouseLeave={() => overviewIconRef.current?.stopAnimation()}
+            className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-colors ${
+              activeTab === "overview"
+                ? "text-cyan-50"
+                : "text-slate-400 hover:text-cyan-100"
+            }`}
+          >
+            <LayoutDashboardIcon ref={overviewIconRef} size={20} color="currentColor" />
+            <span>Overview</span>
+          </button>
+
+          {/* History Button */}
+          <button
+            onClick={() => setActiveTab("history")}
+            onMouseEnter={() => historyIconRef.current?.startAnimation()}
+            onMouseLeave={() => historyIconRef.current?.stopAnimation()}
+            className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-colors ${
+              activeTab === "history"
+                ? "text-cyan-50"
+                : "text-slate-400 hover:text-cyan-100"
+            }`}
+          >
+            <HistoryIcon ref={historyIconRef} size={20} color="currentColor" />
+            <span>History</span>
+          </button>
+
+          {/* Reports Button */}
+          <button
+            onClick={() => {
+              setActiveTab("reports");
+              void fetchCurrentReportId();
+            }}
+            onMouseEnter={() => reportsIconRef.current?.startAnimation()}
+            onMouseLeave={() => reportsIconRef.current?.stopAnimation()}
+            className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-colors ${
+              activeTab === "reports"
+                ? "text-cyan-50"
+                : "text-slate-400 hover:text-cyan-100"
+            }`}
+          >
+            <FileTextIcon ref={reportsIconRef} size={20} color="currentColor" />
+            <span>Reports</span>
+          </button>
+        </nav>
+
+        <div className="border-t border-slate-800 pt-4">
+          <Profile />
+        </div>
+      </aside>
+
+      <section className="h-screen w-full overflow-y-auto p-2">
+        {renderContent()}
+      </section>
     </main>
   );
 }

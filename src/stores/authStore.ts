@@ -5,18 +5,25 @@ import {
   logout as logoutRequest,
 } from "../services/authService";
 import type { LoginForm, User } from "../types/auth";
+import { getCurrentReportId } from "../services/reportService";
 
 interface AuthState {
   user: User | null;
+  currentReportId: number | null;
+  isCurrentReportLoading: boolean;
   isLoading: boolean;
   isInitialized: boolean;
   login: (data: LoginForm) => Promise<User>;
   hydrate: () => Promise<void>;
+  fetchCurrentReportId: () => Promise<number | null>;
+  setCurrentReportId: (reportId: number | null) => void;
   logout: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
+  currentReportId: null,
+  isCurrentReportLoading: false,
   isLoading: false,
   isInitialized: false,
 
@@ -31,6 +38,20 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ isLoading: false });
     }
   },
+
+  fetchCurrentReportId: async () => {
+    set({ isCurrentReportLoading: true });
+
+    try {
+      const currentReportId = await getCurrentReportId();
+      set({ currentReportId });
+      return currentReportId;
+    } finally {
+      set({ isCurrentReportLoading: false });
+    }
+  },
+
+  setCurrentReportId: (currentReportId) => set({ currentReportId: currentReportId || null }),
 
   hydrate: async () => {
     try {
@@ -47,7 +68,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       await logoutRequest();
     } finally {
-      set({ user: null });
+      set({ user: null, currentReportId: null });
     }
   },
 }));
