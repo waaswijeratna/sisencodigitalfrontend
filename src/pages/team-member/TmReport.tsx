@@ -1,8 +1,30 @@
+import { useEffect, useState } from "react";
+import Report from "./report";
+import { useAuthStore } from "../../stores/authStore";
+
 export default function TmReport() {
+  const [reportRefreshKey, setReportRefreshKey] = useState(0);
+  const currentReportId = useAuthStore((state) => state.currentReportId);
+  const isCurrentReportLoading = useAuthStore((state) => state.isCurrentReportLoading);
+  const fetchCurrentReportId = useAuthStore((state) => state.fetchCurrentReportId);
+  const setCurrentReportId = useAuthStore((state) => state.setCurrentReportId);
+
+  useEffect(() => {
+    void fetchCurrentReportId();
+  }, [fetchCurrentReportId]);
+
+  const refreshReport = async () => {
+    await fetchCurrentReportId();
+    setReportRefreshKey((key) => key + 1);
+  };
+
   return (
-    <div className="rounded-xl h-full w-full bg-slate-100 p-6">
-      <h2 className="text-xl font-semibold text-cyan-400">Reports</h2>
-      <p className="mt-2 text-slate-400">This is TM Reports</p>
-    </div>
+    <Report
+      reportId={currentReportId}
+      isReportIdLoading={isCurrentReportLoading}
+      refreshKey={reportRefreshKey}
+      onRefresh={refreshReport}
+      onReportCreated={setCurrentReportId}
+    />
   );
 }

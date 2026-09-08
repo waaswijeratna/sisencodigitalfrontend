@@ -1,5 +1,11 @@
 import api from "../api/axios";
-import type { Project, ReportDetails, ReportPayload } from "../types/report";
+import type {
+  Project,
+  ReportDetails,
+  ReportListFilters,
+  ReportPayload,
+  ReportSummary
+} from "../types/report";
 
 export const getCurrentReportId = async () => {
   const response = await api.get<{ reportId: number | null }>("/reports/me");
@@ -33,4 +39,14 @@ export const submitReport = async (reportId: number, payload: ReportPayload) => 
 
 export const deleteDraftReport = async (reportId: number) => {
   await api.delete(`/reports/${reportId}`);
+};
+
+export const getReports = async (filters: ReportListFilters = {}) => {
+  const response = await api.get<{ reports: ReportSummary[] }>("/reports", {
+    params: Object.fromEntries(
+      Object.entries(filters).filter(([, value]) => Boolean(value))
+    )
+  });
+
+  return response.data.reports;
 };

@@ -2,8 +2,7 @@ import { useState, useRef } from "react";
 import Profile from "../../components/profile";
 import TmOverview from "./TmOverview";
 import TmHistory from "./TmHistory";
-import Report from "./report";
-import { useAuthStore } from "../../stores/authStore";
+import TmReport from "./TmReport";
 import { LayoutDashboardIcon, HistoryIcon, FileTextIcon} from "@animateicons/react/lucide";
 
 import type { LayoutDashboardIconHandle, HistoryIconHandle, FileTextIconHandle } from "@animateicons/react/lucide";
@@ -12,16 +11,6 @@ type NavigationTab = "overview" | "history" | "reports";
 
 export default function TeamMemberHome() {
   const [activeTab, setActiveTab] = useState<NavigationTab>("overview");
-  const [reportRefreshKey, setReportRefreshKey] = useState(0);
-  const currentReportId = useAuthStore((state) => state.currentReportId);
-  const isCurrentReportLoading = useAuthStore((state) => state.isCurrentReportLoading);
-  const fetchCurrentReportId = useAuthStore((state) => state.fetchCurrentReportId);
-  const setCurrentReportId = useAuthStore((state) => state.setCurrentReportId);
-
-  const refreshReport = async () => {
-    await fetchCurrentReportId();
-    setReportRefreshKey((key) => key + 1);
-  };
 
   const overviewIconRef = useRef<LayoutDashboardIconHandle>(null);
   const historyIconRef = useRef<HistoryIconHandle>(null);
@@ -34,7 +23,7 @@ export default function TeamMemberHome() {
       case "history":
         return <TmHistory />;
       case "reports":
-        return <Report reportId={currentReportId} isReportIdLoading={isCurrentReportLoading} refreshKey={reportRefreshKey} onRefresh={refreshReport} onReportCreated={setCurrentReportId} />;
+        return <TmReport />;
       default:
         return <TmOverview />;
     }
@@ -84,7 +73,6 @@ export default function TeamMemberHome() {
           <button
             onClick={() => {
               setActiveTab("reports");
-              void fetchCurrentReportId();
             }}
             onMouseEnter={() => reportsIconRef.current?.startAnimation()}
             onMouseLeave={() => reportsIconRef.current?.stopAnimation()}

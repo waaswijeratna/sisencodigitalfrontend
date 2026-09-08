@@ -88,6 +88,28 @@ export interface ReportDetails {
   adminMessages: AdminMessage[];
 }
 
+export interface ReportSummary {
+  id: number;
+  weekStart: string;
+  weekEnd: string;
+  status: ReportStatus;
+  project: {
+    id: number;
+    name: string;
+  };
+  tasksCompletedCount: number;
+  totalWorkedHours: number;
+  blockers: Blocker[];
+  achievements: Achievement[];
+}
+
+export interface ReportListFilters {
+  date?: string;
+  fromDate?: string;
+  toDate?: string;
+  status?: ReportStatus;
+}
+
 export interface Project {
   id: number;
   name: string;
