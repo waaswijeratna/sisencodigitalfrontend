@@ -20,13 +20,20 @@ const getErrorMessage = (error: unknown) => {
   return error instanceof Error ? error.message : "Unable to load reports.";
 };
 
-export default function AllReports() {
+interface AllReportsProps {
+  teamMemberId?: number;
+}
+
+export default function AllReports({ teamMemberId }: AllReportsProps) {
   const role = useAuthStore((state) => state.user?.role);
   const isAdmin = role === "ADMIN";
+  const showAdminFilters = isAdmin && teamMemberId === undefined;
   const [reports, setReports] = useState<ReportSummary[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [filters, setFilters] = useState<ReportListFilters>({});
+  const [filters, setFilters] = useState<ReportListFilters>(() => (
+    teamMemberId === undefined ? {} : { teamMemberId }
+  ));
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [selectedReportId, setSelectedReportId] = useState<number | null>(null);
@@ -53,7 +60,7 @@ export default function AllReports() {
   }, [filters, loadReports]);
 
   useEffect(() => {
-    if (!isAdmin) return;
+    if (!showAdminFilters) return;
 
     const timeoutId = window.setTimeout(() => {
       void Promise.all([getTeamMembers(), getProjects(true)])
@@ -65,16 +72,19 @@ export default function AllReports() {
     }, 0);
 
     return () => window.clearTimeout(timeoutId);
-  }, [isAdmin]);
+  }, [showAdminFilters]);
 
   const updateFilter = (key: keyof ReportListFilters, value: string) => {
     setFilters((current) => ({
       ...current,
-      [key]: value || undefined
+      [key]: value || undefined,
+      ...(teamMemberId !== undefined ? { teamMemberId } : {})
     }));
   };
 
-  const clearFilters = () => setFilters({});
+  const clearFilters = () => {
+    setFilters(teamMemberId === undefined ? {} : { teamMemberId });
+  };
 
   const refreshModalReport = async () => {
     setModalRefreshKey((key) => key + 1);
@@ -99,7 +109,7 @@ export default function AllReports() {
           </button>
         </div>
 
-        <div className={`mt-5 grid gap-3 ${isAdmin ? "md:grid-cols-3 lg:grid-cols-6" : "md:grid-cols-4"}`}>
+        <div className={`mt-5 grid gap-3 ${showAdminFilters ? "md:grid-cols-3 lg:grid-cols-6" : "md:grid-cols-4"}`}>
           <div>
             <label className="mb-1 block text-xs font-semibold text-slate-500" htmlFor="history-date">By date</label>
             <input id="history-date" type="date" value={filters.date ?? ""} onChange={(event) => updateFilter("date", event.target.value)} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-cyan-500" />
@@ -119,7 +129,7 @@ export default function AllReports() {
               {statuses.map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}
             </select>
           </div>
-          {isAdmin && (
+          {showAdminFilters && (
             <>
               <div>
                 <label className="mb-1 block text-xs font-semibold text-slate-500" htmlFor="history-team-member">Team member</label>

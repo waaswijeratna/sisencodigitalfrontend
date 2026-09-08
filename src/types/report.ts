@@ -138,5 +138,13 @@ export interface TeamMember {
   id: number;
   name: string;
   email: string;
+  latestReport: {
+    id: number;
+    weekStart: string;
+    weekEnd: string;
+    status: ReportStatus;
+    blockers: Blocker[];
+    achievements: Achievement[];
+  } | null;
 }
 
