@@ -116,7 +116,7 @@ const getErrorMessage = (error: unknown) => {
 function SectionTitle({ title, count }: { title: string; count?: number }) {
   return (
     <div className="mb-4 flex items-center justify-between gap-3">
-      <h3 className="text-base font-semibold text-slate-100">{title}</h3>
+      <h3 className="text-base font-semibold text-slate-700">{title}</h3>
       {count !== undefined && <span className="text-xs text-slate-500">{count} entries</span>}
     </div>
   );
@@ -126,8 +126,8 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
   return <label className="mb-1.5 block text-xs font-medium uppercase tracking-[0.14em] text-slate-500">{children}</label>;
 }
 
-const inputClass = "w-full rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-cyan-400 disabled:cursor-not-allowed disabled:opacity-55";
-const cardClass = "rounded-2xl border border-slate-800 bg-slate-950/45 p-5";
+const inputClass = "w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-cyan-400 disabled:cursor-not-allowed disabled:opacity-55";
+const cardClass = "rounded-2xl border border-slate-200 bg-white p-5 shadow-sm";
 
 export default function Report({ reportId, isReportIdLoading, refreshKey, onRefresh, onReportCreated, readOnly = false, adminReviewMode = false }: ReportProps) {
   const [report, setReport] = useState<ReportDetails | null>(null);
@@ -302,27 +302,27 @@ export default function Report({ reportId, isReportIdLoading, refreshKey, onRefr
   };
 
   if (isReportIdLoading || isLoading) {
-    return <div className="flex h-full min-h-[28rem] items-center justify-center rounded-2xl bg-slate-950 text-slate-400">Loading this week&apos;s report...</div>;
+    return <div className="flex h-full min-h-[28rem] items-center justify-center rounded-2xl bg-slate-100 text-sm text-slate-500">Loading this week&apos;s report...</div>;
   }
 
   return (
-    <div className="mx-auto min-h-full max-w-6xl pb-8 text-slate-100">
+    <div className="mx-auto min-h-full max-w-6xl pb-8 text-slate-800">
       <Snackbar message={snackbar?.message ?? null} tone={snackbar?.tone ?? "success"} onClose={() => setSnackbar(null)} />
-      <header className="mb-6 flex flex-col gap-4 border-b border-slate-800 pb-6 sm:flex-row sm:items-end sm:justify-between">
+      <header className="mb-6 flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400">Weekly report</p>
-          <h1 className="text-3xl font-semibold tracking-tight text-white">This week&apos;s progress</h1>
-          <p className="mt-2 max-w-2xl text-sm text-slate-400">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-600">Weekly report</p>
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-800">This week&apos;s progress</h1>
+          <p className="mt-2 max-w-2xl text-sm text-slate-500">
             Capture completed work, plan the next week, and send it to your reviewer when ready.
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {status && <span className="w-fit rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-cyan-300">{status.replace("_", " ")}</span>}
+          {status && <span className="w-fit rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-cyan-700">{status.replace("_", " ")}</span>}
           <button
             type="button"
             onClick={() => void onRefresh()}
             disabled={isReportIdLoading || isLoading || isSaving || isDeleting || isReviewing}
-            className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-cyan-400 hover:text-cyan-300 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-cyan-400 hover:text-cyan-700 disabled:cursor-not-allowed disabled:opacity-40"
             title="Refresh report"
           >
             Refresh
@@ -331,13 +331,13 @@ export default function Report({ reportId, isReportIdLoading, refreshKey, onRefr
       </header>
 
       {status === "NEEDS_CORRECTION" && (
-        <div className="mb-4 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-4 text-sm text-amber-100">
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-800">
           <p className="font-semibold">Your reviewer requested changes.</p>
-          <p className="mt-1 text-amber-100/80">Update the report and submit it again.</p>
+          <p className="mt-1 text-amber-700">Update the report and submit it again.</p>
           {latestCorrection?.message && (
-            <blockquote className="mt-3 border-l-2 border-amber-300/60 pl-3 text-amber-50">
+            <blockquote className="mt-3 border-l-2 border-amber-300 pl-3 text-amber-900">
               <p>{latestCorrection.message}</p>
-              <footer className="mt-2 text-xs text-amber-100/60">
+              <footer className="mt-2 text-xs text-amber-700">
                 {latestCorrection.reviewer.name} · {new Date(latestCorrection.createdAt).toLocaleString()}
               </footer>
             </blockquote>
@@ -371,7 +371,7 @@ export default function Report({ reportId, isReportIdLoading, refreshKey, onRefr
           <SectionTitle title="Completed work" count={tasks.fields.length} />
           <div className="space-y-3">
             {tasks.fields.map((field, index) => (
-              <div className="grid gap-3 rounded-xl border border-slate-800 bg-slate-900/40 p-4 md:grid-cols-4" key={field.id}>
+              <div className="grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-4" key={field.id}>
                 <div className="md:col-span-2"><FieldLabel>Task name</FieldLabel><input className={inputClass} disabled={!canEdit} {...register(`tasksCompleted.${index}.taskName`)} /></div>
                 <div><FieldLabel>Priority</FieldLabel><select className={inputClass} disabled={!canEdit} {...register(`tasksCompleted.${index}.priority`)}>{priorities.map((priority) => <option key={priority} value={priority}>{priority}</option>)}</select></div>
                 <div><FieldLabel>Status</FieldLabel><select className={inputClass} disabled={!canEdit} {...register(`tasksCompleted.${index}.status`)}>{taskStatuses.map((taskStatus) => <option key={taskStatus} value={taskStatus}>{taskStatus.replace("_", " ")}</option>)}</select></div>
@@ -380,31 +380,31 @@ export default function Report({ reportId, isReportIdLoading, refreshKey, onRefr
                 <div><FieldLabel>Planned hours</FieldLabel><input className={inputClass} type="number" min="0" step="0.25" disabled={!canEdit} {...register(`tasksCompleted.${index}.plannedHours`, { valueAsNumber: true })} /></div>
                 <div><FieldLabel>Spent hours</FieldLabel><input className={inputClass} type="number" min="0" step="0.25" disabled={!canEdit} {...register(`tasksCompleted.${index}.spentHours`, { valueAsNumber: true })} /></div>
                 <div className="md:col-span-3"><FieldLabel>Deliverable</FieldLabel><input className={inputClass} disabled={!canEdit} {...register(`tasksCompleted.${index}.deliverable`)} /></div>
-                {canEdit && <button type="button" className="self-end text-left text-xs font-semibold text-rose-300 hover:text-rose-200" onClick={() => tasks.remove(index)}>Remove task</button>}
+                {canEdit && <button type="button" className="self-end text-left text-xs font-semibold text-rose-600 hover:text-rose-700" onClick={() => tasks.remove(index)}>Remove task</button>}
               </div>
             ))}
           </div>
-          {canEdit && <button type="button" className="mt-4 rounded-lg border border-dashed border-slate-700 px-3 py-2 text-xs font-semibold text-cyan-300 hover:border-cyan-400" onClick={() => tasks.append({ taskName: "", priority: "MEDIUM", plannedPercentage: 0, actualPercentage: 0, status: "NOT_STARTED", plannedHours: 0, spentHours: 0, deliverable: "" })}>+ Add completed task</button>}
+          {canEdit && <button type="button" className="mt-4 rounded-lg border border-dashed border-slate-300 px-3 py-2 text-xs font-semibold text-cyan-700 hover:border-cyan-400" onClick={() => tasks.append({ taskName: "", priority: "MEDIUM", plannedPercentage: 0, actualPercentage: 0, status: "NOT_STARTED", plannedHours: 0, spentHours: 0, deliverable: "" })}>+ Add completed task</button>}
         </section>
 
         <section className={cardClass}>
           <SectionTitle title="Next week" count={nextTasks.fields.length} />
           <div className="space-y-3">
-            {nextTasks.fields.map((field, index) => <div className="grid gap-3 md:grid-cols-[1fr_1.5fr_auto]" key={field.id}><input className={inputClass} placeholder="Task name" disabled={!canEdit} {...register(`nextWeekTasks.${index}.taskName`)} /><input className={inputClass} placeholder="Description (optional)" disabled={!canEdit} {...register(`nextWeekTasks.${index}.description`)} />{canEdit && <button type="button" className="px-2 text-xs text-rose-300" onClick={() => nextTasks.remove(index)}>Remove</button>}</div>)}
+            {nextTasks.fields.map((field, index) => <div className="grid gap-3 md:grid-cols-[1fr_1.5fr_auto]" key={field.id}><input className={inputClass} placeholder="Task name" disabled={!canEdit} {...register(`nextWeekTasks.${index}.taskName`)} /><input className={inputClass} placeholder="Description (optional)" disabled={!canEdit} {...register(`nextWeekTasks.${index}.description`)} />{canEdit && <button type="button" className="px-2 text-xs text-rose-600" onClick={() => nextTasks.remove(index)}>Remove</button>}</div>)}
           </div>
-          {canEdit && <button type="button" className="mt-4 rounded-lg border border-dashed border-slate-700 px-3 py-2 text-xs font-semibold text-cyan-300 hover:border-cyan-400" onClick={() => nextTasks.append({ taskName: "", description: "" })}>+ Add next-week task</button>}
+          {canEdit && <button type="button" className="mt-4 rounded-lg border border-dashed border-slate-300 px-3 py-2 text-xs font-semibold text-cyan-700 hover:border-cyan-400" onClick={() => nextTasks.append({ taskName: "", description: "" })}>+ Add next-week task</button>}
         </section>
 
         <div className="grid gap-5 lg:grid-cols-2">
           <section className={cardClass}>
             <SectionTitle title="Blockers" count={blockers.fields.length} />
-            <div className="space-y-3">{blockers.fields.map((field, index) => <div className="flex gap-3" key={field.id}><input className={inputClass} placeholder="Describe a blocker" disabled={!canEdit} {...register(`blockers.${index}.description`)} /><label className="flex shrink-0 items-center gap-2 text-xs text-slate-400"><input type="checkbox" disabled={!canEdit} {...register(`blockers.${index}.isKeyIssue`)} /> Key issue</label>{canEdit && <button type="button" className="text-xs text-rose-300" onClick={() => blockers.remove(index)}>Remove</button>}</div>)}</div>
-            {canEdit && <button type="button" className="mt-4 rounded-lg border border-dashed border-slate-700 px-3 py-2 text-xs font-semibold text-cyan-300 hover:border-cyan-400" onClick={() => blockers.append({ description: "", isKeyIssue: false })}>+ Add blocker</button>}
+            <div className="space-y-3">{blockers.fields.map((field, index) => <div className="flex gap-3" key={field.id}><input className={inputClass} placeholder="Describe a blocker" disabled={!canEdit} {...register(`blockers.${index}.description`)} /><label className="flex shrink-0 items-center gap-2 text-xs text-slate-500"><input type="checkbox" disabled={!canEdit} {...register(`blockers.${index}.isKeyIssue`)} /> Key issue</label>{canEdit && <button type="button" className="text-xs text-rose-600" onClick={() => blockers.remove(index)}>Remove</button>}</div>)}</div>
+            {canEdit && <button type="button" className="mt-4 rounded-lg border border-dashed border-slate-300 px-3 py-2 text-xs font-semibold text-cyan-700 hover:border-cyan-400" onClick={() => blockers.append({ description: "", isKeyIssue: false })}>+ Add blocker</button>}
           </section>
           <section className={cardClass}>
             <SectionTitle title="Achievements" count={achievements.fields.length} />
-            <div className="space-y-3">{achievements.fields.map((field, index) => <div className="flex gap-3" key={field.id}><input className={inputClass} placeholder="Describe an achievement" disabled={!canEdit} {...register(`achievements.${index}.description`)} /><label className="flex shrink-0 items-center gap-2 text-xs text-slate-400"><input type="checkbox" disabled={!canEdit} {...register(`achievements.${index}.isKeyAchievement`)} /> Key achievement</label>{canEdit && <button type="button" className="text-xs text-rose-300" onClick={() => achievements.remove(index)}>Remove</button>}</div>)}</div>
-            {canEdit && <button type="button" className="mt-4 rounded-lg border border-dashed border-slate-700 px-3 py-2 text-xs font-semibold text-cyan-300 hover:border-cyan-400" onClick={() => achievements.append({ description: "", isKeyAchievement: false })}>+ Add achievement</button>}
+            <div className="space-y-3">{achievements.fields.map((field, index) => <div className="flex gap-3" key={field.id}><input className={inputClass} placeholder="Describe an achievement" disabled={!canEdit} {...register(`achievements.${index}.description`)} /><label className="flex shrink-0 items-center gap-2 text-xs text-slate-500"><input type="checkbox" disabled={!canEdit} {...register(`achievements.${index}.isKeyAchievement`)} /> Key achievement</label>{canEdit && <button type="button" className="text-xs text-rose-600" onClick={() => achievements.remove(index)}>Remove</button>}</div>)}</div>
+            {canEdit && <button type="button" className="mt-4 rounded-lg border border-dashed border-slate-300 px-3 py-2 text-xs font-semibold text-cyan-700 hover:border-cyan-400" onClick={() => achievements.append({ description: "", isKeyAchievement: false })}>+ Add achievement</button>}
           </section>
         </div>
 
@@ -416,33 +416,33 @@ export default function Report({ reportId, isReportIdLoading, refreshKey, onRefr
         {canReview && (
           <section className="rounded-2xl border border-cyan-400/25 bg-cyan-400/5 p-5">
             <div>
-              <h2 className="text-base font-semibold text-slate-100">Review report</h2>
-              <p className="mt-1 text-xs text-slate-400">Approve this report or request changes with a message.</p>
+              <h2 className="text-base font-semibold text-slate-700">Review report</h2>
+              <p className="mt-1 text-xs text-slate-500">Approve this report or request changes with a message.</p>
             </div>
             <textarea
               value={reviewComment}
               onChange={(event) => setReviewComment(event.target.value)}
               placeholder="Add a review message"
               rows={3}
-              className="mt-4 w-full resize-y rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2.5 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-cyan-400"
+              className="mt-4 w-full resize-y rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-cyan-400"
             />
             <div className="mt-3 flex flex-wrap justify-end gap-3">
-              <button type="button" disabled={isReviewing} onClick={() => void review("REQUESTED_CHANGES")} className="rounded-lg border border-amber-400/40 px-4 py-2.5 text-sm font-semibold text-amber-200 hover:bg-amber-400/10 disabled:cursor-not-allowed disabled:opacity-40">
+              <button type="button" disabled={isReviewing} onClick={() => void review("REQUESTED_CHANGES")} className="rounded-lg border border-amber-300 px-4 py-2.5 text-sm font-semibold text-amber-700 hover:bg-amber-50 disabled:cursor-not-allowed disabled:opacity-40">
                 {isReviewing ? "Updating..." : "Request changes"}
               </button>
-              <button type="button" disabled={isReviewing} onClick={() => void review("APPROVED")} className="rounded-lg bg-emerald-400 px-4 py-2.5 text-sm font-bold text-emerald-950 hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-40">
+              <button type="button" disabled={isReviewing} onClick={() => void review("APPROVED")} className="rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-bold text-white hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-40">
                 {isReviewing ? "Updating..." : "Approve report"}
               </button>
             </div>
           </section>
         )}
 
-        <footer className="flex flex-col-reverse gap-3 border-t border-slate-800 pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-xs text-slate-500">{adminReviewMode ? "Admin review mode." : status === "SUBMITTED" || status === "APPROVED" ? "This report is view only." : status === "NEEDS_CORRECTION" ? "Submit your corrections when ready." : isDirty ? "Unsaved changes" : "All changes saved"}</div>
           <div className="flex flex-wrap justify-end gap-3">
-            {!adminReviewMode && canDelete && <button type="button" disabled={isDeleting || isSaving} onClick={() => void remove()} className="rounded-lg border border-rose-400/40 px-4 py-2.5 text-sm font-semibold text-rose-300 hover:bg-rose-400/10 disabled:cursor-not-allowed disabled:opacity-40">{isDeleting ? "Deleting..." : "Delete draft"}</button>}
-            {!adminReviewMode && <button type="submit" disabled={isSaving || !saveEnabled} className="rounded-lg border border-cyan-400/40 bg-cyan-400/10 px-4 py-2.5 text-sm font-semibold text-cyan-200 hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-40">{isSaving ? "Saving..." : "Save as draft"}</button>}
-            {!adminReviewMode && <button type="button" disabled={isSaving || !submitEnabled} onClick={() => void handleSubmit(submit)()} className="rounded-lg bg-cyan-400 px-4 py-2.5 text-sm font-bold text-slate-950 hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-40">{isSaving ? "Submitting..." : "Submit report"}</button>}
+            {!adminReviewMode && canDelete && <button type="button" disabled={isDeleting || isSaving} onClick={() => void remove()} className="rounded-lg border border-rose-200 px-4 py-2.5 text-sm font-semibold text-rose-600 hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-40">{isDeleting ? "Deleting..." : "Delete draft"}</button>}
+            {!adminReviewMode && <button type="submit" disabled={isSaving || !saveEnabled} className="rounded-lg border border-cyan-200 bg-cyan-50 px-4 py-2.5 text-sm font-semibold text-cyan-700 hover:bg-cyan-100 disabled:cursor-not-allowed disabled:opacity-40">{isSaving ? "Saving..." : "Save as draft"}</button>}
+            {!adminReviewMode && <button type="button" disabled={isSaving || !submitEnabled} onClick={() => void handleSubmit(submit)()} className="rounded-lg bg-cyan-500 px-4 py-2.5 text-sm font-bold text-white hover:bg-cyan-600 disabled:cursor-not-allowed disabled:opacity-40">{isSaving ? "Submitting..." : "Submit report"}</button>}
           </div>
         </footer>
       </form>

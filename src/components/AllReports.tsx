@@ -159,11 +159,11 @@ export default function AllReports({ teamMemberId }: AllReportsProps) {
 
       {selectedReportId !== null && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/60 p-3 sm:p-6" role="dialog" aria-modal="true" aria-label="Report details">
-          <div className="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-2xl bg-slate-950 p-3 shadow-2xl sm:p-5">
+          <div className="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-2xl bg-slate-100 p-3 shadow-2xl sm:p-5">
             <button
               type="button"
               onClick={() => void closeReportModal()}
-              className="sticky right-0 top-0 z-10 float-right rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-sm font-semibold text-slate-300 hover:border-cyan-400 hover:text-cyan-300"
+              className="sticky right-0 top-0 z-10 float-right rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-semibold text-slate-600 hover:border-cyan-400 hover:text-cyan-700"
               aria-label="Close report"
             >
               Close

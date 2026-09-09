@@ -19,12 +19,14 @@ export default function TmReport() {
   };
 
   return (
-    <Report
-      reportId={currentReportId}
-      isReportIdLoading={isCurrentReportLoading}
-      refreshKey={reportRefreshKey}
-      onRefresh={refreshReport}
-      onReportCreated={setCurrentReportId}
-    />
+    <div className="flex h-full min-h-0 flex-col overflow-y-auto rounded-xl bg-slate-100 p-4 text-slate-800 sm:p-6">
+      <Report
+        reportId={currentReportId}
+        isReportIdLoading={isCurrentReportLoading}
+        refreshKey={reportRefreshKey}
+        onRefresh={refreshReport}
+        onReportCreated={setCurrentReportId}
+      />
+    </div>
   );
 }

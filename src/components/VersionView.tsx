@@ -23,22 +23,22 @@ const statusLabel = (action: AdminMessage["action"]) =>
 
 function Metric({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="rounded-lg border border-slate-800 bg-slate-900/55 px-3 py-2.5">
+    <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
       <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-slate-200">{value}</p>
+      <p className="mt-1 text-sm font-semibold text-slate-700">{value}</p>
     </div>
   );
 }
 
 function ReviewNote({ message }: { message: AdminMessage }) {
   return (
-    <div className="mt-4 rounded-lg border border-amber-400/20 bg-amber-400/5 px-3 py-3 text-xs">
-      <div className="flex flex-wrap items-center justify-between gap-2 text-amber-200">
+    <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-amber-700">
         <span className="font-semibold">{statusLabel(message.action)}</span>
-        <span className="text-amber-100/50">{formatDate(message.createdAt)}</span>
+        <span className="text-amber-700/70">{formatDate(message.createdAt)}</span>
       </div>
-      {message.message && <p className="mt-2 leading-5 text-amber-100/75">{message.message}</p>}
-      <p className="mt-2 text-amber-100/45">Reviewed by {message.reviewer.name}</p>
+      {message.message && <p className="mt-2 leading-5 text-amber-800">{message.message}</p>}
+      <p className="mt-2 text-amber-700/70">Reviewed by {message.reviewer.name}</p>
     </div>
   );
 }
@@ -60,13 +60,13 @@ function VersionEntry({
 }) {
   return (
     <article className="relative pl-8 sm:pl-10">
-      <span className={`absolute left-0 top-1.5 flex h-5 w-5 items-center justify-center rounded-full border-4 border-slate-950 ${isCurrent ? "bg-cyan-300" : "bg-slate-600"}`} aria-hidden="true" />
-      <div className="rounded-xl border border-slate-800 bg-slate-900/35 p-4">
+      <span className={`absolute left-0 top-1.5 flex h-5 w-5 items-center justify-center rounded-full border-4 border-white ${isCurrent ? "bg-cyan-500" : "bg-slate-300"}`} aria-hidden="true" />
+      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="font-semibold text-slate-100">Version {versionNumber}</h3>
-              {isCurrent && <span className="rounded-full bg-cyan-400/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-cyan-300">Current</span>}
+              <h3 className="font-semibold text-slate-700">Version {versionNumber}</h3>
+              {isCurrent && <span className="rounded-full bg-cyan-50 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-cyan-700">Current</span>}
             </div>
             <p className="mt-1 text-xs text-slate-500">Created {formatDate(createdAt)}</p>
           </div>
@@ -84,16 +84,16 @@ export default function VersionView({ latestVersion, previousVersions, adminMess
   const currentReviewMessages = adminMessages.filter((message) => message.versionId === latestVersion.id);
 
   return (
-    <section className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/45 p-5 sm:p-6">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3 border-b border-slate-800 pb-5">
+    <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3 border-b border-slate-200 pb-5">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400">Report history</p>
-          <h2 className="mt-1 text-xl font-semibold text-white">Version timeline</h2>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-600">Report history</p>
+          <h2 className="mt-1 text-xl font-semibold text-slate-800">Version timeline</h2>
         </div>
         <p className="text-xs text-slate-500">{previousVersions.length + 1} version{previousVersions.length === 0 ? "" : "s"}</p>
       </div>
 
-      <div className="relative space-y-5 before:absolute before:bottom-4 before:left-[9px] before:top-2 before:w-px before:bg-slate-800">
+      <div className="relative space-y-5 before:absolute before:bottom-4 before:left-[9px] before:top-2 before:w-px before:bg-slate-200">
         <VersionEntry
           versionNumber={latestVersion.versionNumber}
           createdAt={latestVersion.createdAt}
@@ -107,7 +107,7 @@ export default function VersionView({ latestVersion, previousVersions, adminMess
             <Metric label="Blockers" value={latestVersion.blockers.length} />
             <Metric label="Achievements" value={latestVersion.achievements.length} />
           </div>
-          {latestVersion.hours && <p className="mt-3 text-xs text-slate-500">Total worked hours: <span className="font-semibold text-slate-300">{latestVersion.hours.totalHours}</span></p>}
+          {latestVersion.hours && <p className="mt-3 text-xs text-slate-500">Total worked hours: <span className="font-semibold text-slate-700">{latestVersion.hours.totalHours}</span></p>}
         </VersionEntry>
 
         {versions.map((version) => (
