@@ -4,6 +4,7 @@ import AdminOverview from "./AdminOverview";
 import AdminReports from "./AdminReports";
 import AdminTeamMembers from "./AdminTeamMembers";
 import AdminProjects from "./AdminProjects";
+import AIChat from "../../components/AIChat";
 import { LayoutDashboardIcon, FileTextIcon, Users, LayoutList } from "@animateicons/react/lucide";
 
 import type { 
@@ -115,6 +116,8 @@ export default function AdminHome() {
       <section className="h-screen w-full overflow-y-auto p-2">
         {renderContent()}
       </section>
+
+      <AIChat />
     </main>
   );
 }
