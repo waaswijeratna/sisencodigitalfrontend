@@ -42,7 +42,7 @@ export default function AdminTeamMembers() {
           </button>
         </header>
 
-        <div className="min-h-0 flex-1 pt-5">
+        <div className="min-h-0 flex-1 pt-5 ">
           <AllReports key={selectedUser.id} teamMemberId={selectedUser.id} />
         </div>
       </div>
@@ -57,7 +57,7 @@ export default function AdminTeamMembers() {
         <p className="mt-1 text-sm text-slate-500">Open a member to review their reports.</p>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto pt-5">
+      <div className="min-h-0 flex-1 overflow-y-auto pt-5 scrollbar-hide">
         {errorMessage && <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{errorMessage}</div>}
         {!errorMessage && users.length === 0 && <div className="rounded-xl border border-dashed border-slate-300 bg-white px-5 py-12 text-center text-sm text-slate-500">No team members found.</div>}
         <div className="grid gap-4 lg:grid-cols-2">{users.map((user) => <UserCard key={user.id} user={user} onClick={() => setSelectedUser(user)} />)}</div>

@@ -36,7 +36,7 @@ export default function TmOverview() {
   const current = overview.currentReport;
 
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-y-auto rounded-xl bg-slate-100 p-4 text-slate-800 sm:p-6">
+    <div className="flex h-full min-h-0 flex-col overflow-y-auto rounded-xl bg-slate-100 p-4 text-slate-800 sm:p-6 scrollbar-hide">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-600">Your workspace</p><h1 className="mt-1 text-2xl font-semibold">Overview</h1><p className="mt-1 text-sm text-slate-500">A quick look at your reporting activity.</p></div>
         <button type="button" onClick={() => void loadOverview()} disabled={isLoading} className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:border-cyan-400 hover:text-cyan-700">Refresh</button>

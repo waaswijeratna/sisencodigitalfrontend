@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { EyeIcon, EyeClosedIcon } from "@animateicons/react/lucide";
 import type { LoginForm, SignupForm } from "../types/auth";
 
 interface AuthFormProps {
@@ -15,6 +17,8 @@ export default function AuthForm({
   isLoading = false,
   onSubmit,
 }: AuthFormProps) {
+  const [showPassword, setShowPassword] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -31,10 +35,7 @@ export default function AuthForm({
 
       {isSignup && (
         <div>
-
-          <label className="mb-2 block text-sm font-medium">
-            Name
-          </label>
+          <label className="mb-2 block text-sm font-medium">Name</label>
 
           <input
             {...register("name", {
@@ -53,9 +54,7 @@ export default function AuthForm({
       )}
 
       <div>
-        <label className="mb-2 block text-sm font-medium">
-          Email
-        </label>
+        <label className="mb-2 block text-sm font-medium">Email</label>
 
         <input
           type="email"
@@ -74,22 +73,35 @@ export default function AuthForm({
       </div>
 
       <div>
-        <label className="mb-2 block text-sm font-medium">
-          Password
-        </label>
+        <label className="mb-2 block text-sm font-medium">Password</label>
 
-        <input
-          type="password"
-          {...register("password", {
-            required: "Password is required",
-            minLength: {
-              value: 8,
-              message: "Password must be at least 8 characters",
-            },
-          })}
-          className="w-full rounded-lg border p-3"
-          placeholder="••••••••"
-        />
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters",
+              },
+            })}
+            className="w-full rounded-lg border p-3 pr-10"
+            placeholder="••••••••"
+          />
+
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer p-1 text-zinc-500 hover:text-zinc-800"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? (
+              <EyeIcon size={20} duration={1} color="#666666" />
+            ) : (
+              <EyeClosedIcon size={20} duration={1} color="#666666" />
+            )}
+          </button>
+        </div>
 
         {errors.password && (
           <p className="mt-1 text-sm text-red-500">
@@ -101,13 +113,13 @@ export default function AuthForm({
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white"
+        className="w-full cursor-pointer rounded-lg bg-zinc-800 py-3 font-semibold text-white"
       >
         {isLoading ? "Please wait..." : isSignup ? "Create Account" : "Login"}
       </button>
 
       <p className="text-center text-sm text-[#657066]">
-        {isSignup ? "Already have an account?" : "New to Sisencodigital?"}{" "}
+        {isSignup ? "Already have an account?" : "New to SisencoReports?"}{" "}
         <Link
           to={isSignup ? "/login" : "/signup"}
           className="font-semibold text-[#1f5b4c] hover:text-[#163f35]"

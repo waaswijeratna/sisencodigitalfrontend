@@ -19,8 +19,8 @@ export default function ProjectCard({ project, onEdit, onDelete }: ProjectCardPr
         </span>
       </div>
       <div className="mt-5 flex justify-end gap-2 border-t border-slate-100 pt-4">
-        <button type="button" onClick={onEdit} className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-600 hover:border-cyan-400 hover:text-cyan-700">Edit</button>
-        <button type="button" onClick={onDelete} className="rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50">Delete</button>
+        <button type="button" onClick={onEdit} className="cursor-pointer rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-600 hover:border-cyan-400 hover:text-cyan-700">Edit</button>
+        <button type="button" onClick={onDelete} className="cursor-pointer rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50">Delete</button>
       </div>
     </article>
   );

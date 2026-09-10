@@ -96,7 +96,7 @@ export default function AllReports({ teamMemberId }: AllReportsProps) {
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col rounded-xl bg-slate-100 p-4 sm:p-6">
+    <div className="flex h-full min-h-0 flex-col rounded-xl bg-slate-100 p-4 sm:p-6 ">
       <header className="shrink-0 border-b border-slate-200 pb-5">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
@@ -151,15 +151,15 @@ export default function AllReports({ teamMemberId }: AllReportsProps) {
         {(filters.date || filters.fromDate || filters.toDate || filters.status || filters.teamMemberId || filters.projectId) && <button type="button" onClick={clearFilters} className="mt-3 text-xs font-semibold text-cyan-700 hover:text-cyan-900">Clear filters</button>}
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto pt-5">
+      <div className="min-h-0 flex-1 overflow-y-auto pt-5 scrollbar-hide">
         {errorMessage && <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{errorMessage}</div>}
         {!isLoading && !errorMessage && reports.length === 0 && <div className="rounded-xl border border-dashed border-slate-300 bg-white px-5 py-12 text-center text-sm text-slate-500">No reports match the selected filters.</div>}
         <div className="grid gap-4 lg:grid-cols-2">{reports.map((report) => <ReportCard key={report.id} report={report} onClick={() => setSelectedReportId(report.id)} />)}</div>
       </div>
 
       {selectedReportId !== null && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/60 p-3 sm:p-6" role="dialog" aria-modal="true" aria-label="Report details">
-          <div className="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-2xl bg-slate-100 p-3 shadow-2xl sm:p-5">
+        <div className="scrollbar-hide fixed inset-0 z-40 flex items-center justify-center bg-slate-950/60 p-3 sm:p-6" role="dialog" aria-modal="true" aria-label="Report details">
+          <div className="relative max-h-[92vh] w-full max-w-6xl overflow-y-auto rounded-2xl bg-slate-100 p-3 shadow-2xl sm:p-5 scrollbar-hide">
             <button
               type="button"
               onClick={() => void closeReportModal()}

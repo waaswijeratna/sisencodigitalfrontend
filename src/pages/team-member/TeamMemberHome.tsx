@@ -34,7 +34,7 @@ export default function TeamMemberHome() {
       <aside className="flex h-screen w-[15vw] flex-col justify-between p-4">
         <div>
           <div className="text-xl font-bold tracking-wider text-cyan-400">
-            LOGO
+            <img src="/logo.svg" alt="Logo" className="h-10 w-auto" />
           </div>
         </div>
 
@@ -44,7 +44,7 @@ export default function TeamMemberHome() {
             onClick={() => setActiveTab("overview")}
             onMouseEnter={() => overviewIconRef.current?.startAnimation()}
             onMouseLeave={() => overviewIconRef.current?.stopAnimation()}
-            className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-colors ${
+            className={`cursor-pointer flex items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-colors ${
               activeTab === "overview"
                 ? "text-cyan-50"
                 : "text-slate-400 hover:text-cyan-100"
@@ -59,7 +59,7 @@ export default function TeamMemberHome() {
             onClick={() => setActiveTab("history")}
             onMouseEnter={() => historyIconRef.current?.startAnimation()}
             onMouseLeave={() => historyIconRef.current?.stopAnimation()}
-            className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-colors ${
+            className={`cursor-pointer flex items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-colors ${
               activeTab === "history"
                 ? "text-cyan-50"
                 : "text-slate-400 hover:text-cyan-100"
@@ -76,7 +76,7 @@ export default function TeamMemberHome() {
             }}
             onMouseEnter={() => reportsIconRef.current?.startAnimation()}
             onMouseLeave={() => reportsIconRef.current?.stopAnimation()}
-            className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-colors ${
+            className={`cursor-pointer flex items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-colors ${
               activeTab === "reports"
                 ? "text-cyan-50"
                 : "text-slate-400 hover:text-cyan-100"
@@ -92,7 +92,7 @@ export default function TeamMemberHome() {
         </div>
       </aside>
 
-      <section className="h-screen w-full overflow-y-auto p-2">
+      <section className="h-screen w-full overflow-y-auto p-2 ">
         {renderContent()}
       </section>
     </main>

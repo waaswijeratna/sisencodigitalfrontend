@@ -93,7 +93,7 @@ export default function AdminOverview() {
   ];
 
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-y-auto rounded-xl bg-slate-100 p-4 text-slate-800 sm:p-6">
+    <div className="flex h-full min-h-0 flex-col overflow-y-auto rounded-xl bg-slate-100 p-4 text-slate-800 sm:p-6 scrollbar-hide">
       <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-600">Admin workspace</p>

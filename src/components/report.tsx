@@ -306,7 +306,7 @@ export default function Report({ reportId, isReportIdLoading, refreshKey, onRefr
   }
 
   return (
-    <div className="mx-auto min-h-full max-w-6xl pb-8 text-slate-800">
+    <div className="mx-auto min-h-full max-w-6xl pb-8 text-slate-800 ">
       <Snackbar message={snackbar?.message ?? null} tone={snackbar?.tone ?? "success"} onClose={() => setSnackbar(null)} />
       <header className="mb-6 flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>

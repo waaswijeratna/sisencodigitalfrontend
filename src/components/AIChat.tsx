@@ -87,7 +87,7 @@ export default function AIChat() {
     return (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
             {isOpen && (
-                <section className="flex h-[min(32rem,calc(100vh-7rem))] w-[min(24rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl">
+                <section className="flex h-[min(32rem,calc(100vh-7rem))] w-[min(24rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl ">
                     <header className="flex items-center gap-2 border-b border-slate-200 px-4 py-3">
                         <span className="bg-zinc-950 rounded-full">
                             <SiriOrb size="30px" animationDuration={6} />
@@ -95,7 +95,7 @@ export default function AIChat() {
                         <h2 className="font-semibold text-slate-900">Ask AI</h2>
                     </header>
 
-                    <div className="flex-1 space-y-3 overflow-y-auto bg-slate-50 p-4">
+                    <div className="flex-1 space-y-3 overflow-y-auto bg-slate-50 p-4 scrollbar-hide">
                         {messages.length === 0 && (
                             <p className="text-sm text-slate-500">
                                 Ask about reports, projects, or your team.
